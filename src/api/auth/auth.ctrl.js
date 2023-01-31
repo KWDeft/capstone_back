@@ -15,7 +15,7 @@ export const register = async (ctx) => {
   const schema = Joi.object().keys({
     username: Joi.string().alphanum().min(3).max(20).required(),
     password: Joi.string().required(),
-    role: Joi.string().required(),
+    role: Joi.string().required().valid('user', 'coach', 'admin'),
   });
   const result = schema.validate(ctx.request.body);
   if (result.error) {
@@ -35,7 +35,7 @@ export const register = async (ctx) => {
 
     const user = new User({
       username,
-      
+      role,
     });
     await user.setPassword(password); // 비밀번호 설정
     await user.save(); // 데이터베이스에 저장

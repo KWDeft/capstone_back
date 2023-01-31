@@ -5,6 +5,7 @@ import jwt from 'jsonwebtoken';
 const UserSchema = new Schema({
   username: String,
   hashedPassword: String,
+  role: String,
 });
 
 UserSchema.methods.setPassword = async function(password) {
@@ -29,6 +30,7 @@ UserSchema.methods.generateToken = function() {
     {
       _id: this.id,
       username: this.username,
+      role: this.role,
     },
     process.env.JWT_SECRET, // 두번째 파라미터에는 JWT 암호를 넣습니다
     {
