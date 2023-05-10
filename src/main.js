@@ -15,7 +15,7 @@ mongoose
   .then(() => {
     console.log('Connected to MongoDB');
   })
-  .catch(e => {
+  .catch((e) => {
     console.error(e);
   });
 
@@ -24,6 +24,9 @@ const router = new Router();
 
 // 라우터 설정
 router.use('/api', api.routes()); // api 라우트 적용
+
+// 파일 업로드
+const cors = require('@koa/cors');
 
 // 라우터 적용 전에 bodyParser 적용
 app.use(bodyParser());
@@ -34,6 +37,13 @@ app.use(router.routes()).use(router.allowedMethods());
 
 // PORT 가 지정되어있지 않다면 4000 을 사용
 const port = PORT || 4000;
+
+// 파일 업로드 관련
+app
+  .use(cors()) // Test를 하기 위해서 세팅 "실제 서버에 배포할 때는 아이피를 설정 해야된다."
+  .use(router.routes())
+  .use(router.allowedMethods());
+
 app.listen(port, () => {
   console.log('Listening to port %d', port);
 });

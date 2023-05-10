@@ -19,9 +19,9 @@ const ConsumerSchema = new Schema({
   birthday: String, // 생년월일
   membership: String, // 회원권
   user_purpose: String, // 운동목적
-vaccinate: String, //백신유무
-category: String, //유형
-
+  vaccinate: String, // 백신유무
+  category: String, // 유형
+  profile: String, // 프로필
 });
 
 ConsumerSchema.statics.findByUsernum = function (usernum) {

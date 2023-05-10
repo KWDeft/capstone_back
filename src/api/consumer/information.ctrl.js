@@ -26,7 +26,7 @@ export const list = async (ctx) => {
     phone: "01012341234", 
     address: "서울특별시 노원구", 
     memo: "기타메모",
-    manager: 1001, 
+    manager: "김코치", 
     payment: "계좌이체", 
     inflow: "유입경로",
     statement: "상태", 
@@ -35,7 +35,8 @@ export const list = async (ctx) => {
     membership: "회원권1",
     user_purpose: "운동 목적",
     vaccinate: "백신유무",
-    category: "오프라인"
+    category: "오프라인",
+    profile: ""
   }
 */
 export const inforCreate = async (ctx) => {
@@ -63,7 +64,7 @@ export const inforCreate = async (ctx) => {
     user_purpose: Joi.string(), // 운동목적
     vaccinate: Joi.string(), // 백신유무
     category: Joi.string(), // 유형
-
+    profile: Joi.string(),
   });
 
   const result = schema.validate(ctx.request.body);
@@ -94,6 +95,7 @@ export const inforCreate = async (ctx) => {
     user_purpose,
     vaccinate,
     category,
+    profile,
   } = ctx.request.body;
   try {
     // usernum 이 이미 존재하는지 확인
@@ -124,6 +126,7 @@ export const inforCreate = async (ctx) => {
       user_purpose: user_purpose,
       vaccinate: vaccinate,
       category: category,
+      profile: profile,
     });
 
     await post.save(); // 데이터베이스에 저장
@@ -156,7 +159,7 @@ export const read = async (ctx) => {
 export const searchusernum = async (ctx) => {
   const { usernum } = ctx.params;
   try {
-    const post = await Info.findOne({usernum : usernum}).exec();
+    const post = await Info.findOne({ usernum: usernum }).exec();
     if (!post) {
       ctx.status = 404;
       return;
@@ -222,4 +225,36 @@ export const userSearch = async (ctx) => {
   } catch (e) {
     ctx.throw(500, e);
   }
+};
+
+/*
+    POST /api/consumer/profile/upload
+    {
+      file: 
+    }
+*/
+export const UploadProfile = async (ctx) => {
+  const {
+    fieldname,
+    originalname,
+    encoding,
+    mimetype,
+    destination,
+    filename,
+    path,
+    size,
+  } = ctx.request.file;
+  const { name } = ctx.request.body;
+
+  console.log('body 데이터 : ', name);
+  console.log('폼에 정의된 필드명 : ', fieldname);
+  console.log('사용자가 업로드한 파일 명 : ', originalname);
+  console.log('파일의 엔코딩 타입 : ', encoding);
+  console.log('파일의 Mime 타입 : ', mimetype);
+  console.log('파일이 저장된 폴더 : ', destination);
+  console.log('destinatin에 저장된 파일 명 : ', filename);
+  console.log('업로드된 파일의 전체 경로 ', path);
+  console.log('파일의 바이트(byte 사이즈)', size);
+
+  ctx.body = { ok: true, data: 'Profile Upload Ok', path: path };
 };
