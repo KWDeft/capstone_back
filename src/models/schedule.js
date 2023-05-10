@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 
 const ScheduleSchema = new Schema({
   usernum: Number,        // 회원번호
-  manager: Number,        // 담당자명
+  manager: String,        // 담당자명
   name: String,
   date: String,           // 수업 날짜
   startHour: String,      // 수업 시작 시간 (시)

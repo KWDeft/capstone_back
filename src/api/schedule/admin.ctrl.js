@@ -7,6 +7,7 @@ import Joi from 'joi';
     POST /api/schedule/admin
     {
         usernum: '회원번호',
+        manager: '수업할코치',
         date: '수업 날짜',
         startHour: '시작 시간 (시)',
         startMinute: '시작 시간 (분)',
@@ -19,7 +20,7 @@ export const scheduleAdmin = async (ctx) => {
   const schema = Joi.object().keys({
     //객체가 다음 필드를 가지고 있음을 검증
     usernum: Joi.number().required(), // required()가 있으면 필수 항목
-    manager: Joi.number(),
+    manager: Joi.string(),
     name: Joi.string(),
     date: Joi.string().required(),
     startHour: Joi.string().required(),
@@ -37,9 +38,9 @@ export const scheduleAdmin = async (ctx) => {
     return;
   }
 
-  const {usernum, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
+  const {usernum, manager, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
   const {name} = await Consumer.findOne({usernum : usernum}).exec();
-  const {manager} = await Consumer.findOne({usernum : usernum}).exec();
+  // const {manager} = await Consumer.findOne({usernum : usernum}).exec();
   console.log("name : ", name);
   const scheduleAdmin = new ScheduleAdmin({
     usernum,

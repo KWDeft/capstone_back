@@ -1,5 +1,7 @@
 import ScheduleCoach from "../../models/schedule";
 import Consumer from "../../models/consumer.info";
+import Coach from '../../models/member.coach';
+
 
 import Joi from 'joi';
 
@@ -7,6 +9,7 @@ import Joi from 'joi';
     POST /api/schedule/coach
     {
         usernum: '회원번호',
+        manager: '수업할코치',
         date: '수업 날짜',
         startHour: '시작 시간 (시)',
         startMinute: '시작 시간 (분)',
@@ -25,7 +28,7 @@ export const scheduleCoach = async (ctx) => {
     startMinute: Joi.string().required(),
     endHour: Joi.string().required(),
     endMinute: Joi.string().required(),
-    memo: Joi.string().required(),
+    memo: Joi.string(),
   });
 
   //검증과 실패인 경우 에러 처리
@@ -36,8 +39,8 @@ export const scheduleCoach = async (ctx) => {
     return;
   }
 
-  const {usernum, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
-  const {manager} = await Consumer.findOne({usernum : usernum}).exec();
+  const {usernum, manager, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
+  // const {manager} = await Consumer.findOne({usernum : usernum}).exec();
   const scheduleCoach = new ScheduleCoach({
     usernum, 
     manager,
@@ -57,7 +60,7 @@ export const scheduleCoach = async (ctx) => {
     const checkconsumer = await ScheduleCoach.findOne({ usernum : usernum, date : date});
     if (checkconsumer != undefined){
       ctx.status = 400;
-      ctx.body = { message: "해당 날짜에 해당 회g원의 일정이 이미 존재합니다." };
+      ctx.body = { message: "해당 날짜에 해당 회원의 일정이 이미 존재합니다." };
       return;
     }
   
@@ -81,6 +84,7 @@ export const scheduleCoach = async (ctx) => {
 // 해당 코치의 모든 일정 불러오기
 export const list = async (ctx) => {
   const {manager} = ctx.params;
+  console.log("매니저",manager);
 
   try {
 
@@ -126,6 +130,29 @@ export const searchName = async (ctx) => {
       return;
     }
     ctx.body = searchUsername;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+    GET api/schedule/coach/coachnum/:coachnum
+*/
+// 코치번호로 일정 가져오기
+export const listwithcoachnum = async (ctx) => {
+  const {coachnum} = ctx.params;
+  console.log("하,.",coachnum);
+
+  const {name} = await Coach.findOne({coachnum:coachnum}).exec();
+  console.log("이거야",name);
+  try {
+    const schedules = await ScheduleCoach.find({manager : name}).exec();
+    console.log(schedules);
+    if(!schedules) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+    ctx.body = schedules;
   } catch (e) {
     ctx.throw(500, e);
   }

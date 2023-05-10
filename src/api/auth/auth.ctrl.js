@@ -1,5 +1,6 @@
 import Joi from 'joi';
 import User from '../../models/user';
+import Coach from '../../models/member.coach';
 import bcrypt from 'bcrypt';
 
 /*
@@ -24,8 +25,12 @@ export const register = async (ctx) => {
     return;
   }
 
+  
+
   const { username, password, role } = ctx.request.body;
   try {
+
+    
     // username  이 이미 존재하는지 확인
     const exists = await User.findByUsername(username);
     if (exists) {
@@ -33,6 +38,18 @@ export const register = async (ctx) => {
       return;
     }
 
+    console.log("result는",result.value.role);
+    if (result.value.role == 'coach'){
+    const checkCoach = await Coach.findOne({coachnum:username});
+    console.log("있나?",checkCoach);
+    if (checkCoach == undefined){
+      console.log('존재하지 않는 코치');
+      ctx.body ='존재하지 않는 코치입니다.'
+      
+      return;
+
+    }
+  }
     const user = new User({
       username,
       role,
@@ -61,6 +78,8 @@ export const register = async (ctx) => {
 */
 export const login = async (ctx) => {
   const { username, password } = ctx.request.body;
+  const user = await User.findOne({username : username}).exec();
+  console.log(user.role); //로그인한 사용자의 역할(권한)
 
   // username, password 가 없으면 에러 처리
   if (!username || !password) {
@@ -87,6 +106,13 @@ export const login = async (ctx) => {
       maxAge: 1000 * 60 * 60 * 24 * 7, // 7일
       httpOnly: true,
     });
+
+    if (user.role == "admin"){
+      console.log("관리자임");
+    }
+
+    // ctx.redirect("/fc/dashboard/")
+    // res.send("<script>alert('안녕하세요!');</script>")
   } catch (e) {
     ctx.throw(500, e);
   }
@@ -168,6 +194,25 @@ export const updatePW = async (ctx) => {
     );
 
     ctx.body = ctx.request.body;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+  GET /api/auth/user/:username
+*/
+export const readuser = async (ctx) => {
+  const {username} = ctx.params;
+
+  console.log(username);
+  try {
+    const user = await User.find({username:username}).exec();
+    if(!user) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+    ctx.body = user;
   } catch (e) {
     ctx.throw(500, e);
   }

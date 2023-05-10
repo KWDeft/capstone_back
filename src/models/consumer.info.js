@@ -11,7 +11,7 @@ const ConsumerSchema = new Schema({
   phone: String, // 전화번호
   address: String, // 주소
   memo: String, // 기타 메모
-  manager: Number, // 담당자(코치 번호로 작성하기)
+  manager: String, // 담당자(코치 번호로 작성하기)
   payment: String, // 결제정보
   inflow: String, // 유입경로(소개정보)
   statement: String, // 상태

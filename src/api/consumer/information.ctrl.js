@@ -53,7 +53,7 @@ export const inforCreate = async (ctx) => {
     phone: Joi.string().required(), // 전화번호(필수)
     address: Joi.string(), // 주소
     memo: Joi.string(), // 기타 메모
-    manager: Joi.number().required(), // 담당자(필수) -> 코치번호로 작성하기
+    manager: Joi.string().required(), // 담당자(필수) -> 코치번호로 작성하기
     payment: Joi.string(), // 결제정보
     inflow: Joi.string(), // 유입경로
     statement: Joi.string(), // 상태

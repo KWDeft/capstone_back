@@ -3,6 +3,7 @@ import User from '../../models/user';
 import Coach from '../../models/member.coach';
 import Info from '../../models/consumer.info';
 import Admin from '../../models/member.admin';
+import { check } from '../auth/auth.ctrl';
 
 /*
   POST /api/member/coach/create
@@ -22,13 +23,13 @@ export const coachCreate = async (ctx) => {
   // 필수: 이름, 전화번호 / 선택: 이메일, 직무, 이력, 아이디, 비밀번호
   const schema = Joi.object().keys({
     name: Joi.string().required(), // 이름(필수)
-    phone: Joi.string().required(), // 전화번호(필수)
+    phone: Joi.string(), // 전화번호(필수)
     email: Joi.string(), // 이메일
     username: Joi.string().alphanum().min(3).max(20), // 아이디
     password: Joi.string(), // 비밀번호
     job: Joi.string(), // 직무
     record: Joi.string(), // 이력
-    coachnum: Joi.number().required(), // 코치 번호(필수)
+    coachnum: Joi.string(), // 코치 번호(필수)
   });
 
   const result = schema.validate(ctx.request.body);
@@ -80,6 +81,24 @@ export const list = async (ctx) => {
 };
 
 /*
+    GET /api/member/coach/coachname
+*/
+export const namelist = async (ctx) => {
+  let nameArr = []
+  try {
+    const posts = await Coach.find().exec();
+    // console.log(posts);
+    for(let i=0;i<posts.length;i++){
+      nameArr.push(posts[i].name);
+    }
+    console.log(nameArr);
+    ctx.body = nameArr;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
     GET /api/member/coach/:id
 */
 export const read = async (ctx) => {
@@ -102,6 +121,7 @@ export const read = async (ctx) => {
 */
 export const searchcoachnum = async (ctx) => {
   const { coachnum } = ctx.params;
+  console.log(coachnum);
   try {
     const post = await Coach.findOne({coachnum:coachnum}).exec();
     if (!post) {
@@ -216,4 +236,38 @@ export const searchMember = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+/*
+  GET /api/coach/coachnum/:phone
+  {
+    phone: "01011111111"
+  }
+*/
+export const phoneConfirm = async (ctx) => {
+  const {phone} = ctx.request.body;
+  // console.log("받아온 값",phone);
+  let check = 1;
+  if (phone.length != 11){
+    ctx.body='올바른 전화번호를 입력하세요. \n (-제외 11자리 입력)';
+    return check;
+  }
+  try{
+    const checkPhonNum = await Coach.findOne({phone:phone});
+    
+    if (checkPhonNum != undefined){
+      // console.log("이미 존재", checkPhonNum);
+      ctx.body = '해당 전화번호는 이미 존재합니다.';
+      return check;
+    }
+    else {
+      // console.log("존재 x", checkPhonNum);
+      ctx.body = "추가 가능합니다.";
+      check = 2;
+      return check;
+    }
+  }catch(e) {
+    ctx.throw(500, e);
+  }
+}
+
 

@@ -8,7 +8,7 @@ const CoachSchema = new Schema({
   password: String, // 비밀번호
   job: String, // 직무
   record: String, // 이력
-  coachnum: Number, // 코치 번호
+  coachnum: String, // 코치 번호
 });
 
 const Coach = mongoose.model('Coach', CoachSchema);
