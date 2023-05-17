@@ -228,7 +228,7 @@ export const userSearch = async (ctx) => {
 };
 
 /*
-    POST /api/consumer/profile/upload
+    PATCH /api/consumer/profile/upload/:id
     {
       file: 
     }
@@ -257,4 +257,20 @@ export const UploadProfile = async (ctx) => {
   console.log('파일의 바이트(byte 사이즈)', size);
 
   ctx.body = { ok: true, data: 'Profile Upload Ok', path: path };
+
+  const { id } = ctx.params;
+  try {
+    const post = await Info.updateOne(
+      { _id: id },
+      { $set: { profile: path } },
+    ).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+
+    ctx.body = await Info.findById(id).exec();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
 };

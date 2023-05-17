@@ -1,4 +1,4 @@
-import CourseComment from "../../models/courseComment";
+import CourseComment from '../../models/courseComment';
 import Joi from 'joi';
 
 /*
@@ -7,7 +7,7 @@ import Joi from 'joi';
         content: '',
         userId: '',
         courseId: '',
-        responseTo: '',
+        date: '',
     }
 */
 export const comment = async (ctx) => {
@@ -21,13 +21,13 @@ export const comment = async (ctx) => {
 
   //검증과 실패인 경우 에러 처리
   const result = schema.validate(ctx.request.body);
-  if(result.error) {
+  if (result.error) {
     ctx.status = 400; //Bad request
     ctx.body = result.error;
     return;
   }
 
-  const {content, userId, courseId, date} = ctx.request.body;
+  const { content, userId, courseId, date } = ctx.request.body;
   const courseComment = new CourseComment({
     content,
     userId,
@@ -35,10 +35,10 @@ export const comment = async (ctx) => {
     date,
     user: ctx.state.user,
   });
-  try{
+  try {
     await courseComment.save();
     ctx.body = courseComment;
-  } catch(e) {
+  } catch (e) {
     ctx.throw(500, e);
   }
 };
@@ -50,7 +50,7 @@ export const getComments = async (ctx) => {
   const { courseId } = ctx.params;
 
   try {
-    const post = await CourseComment.find({ courseId : courseId }).exec();
+    const post = await CourseComment.find({ courseId: courseId }).exec();
     if (!post) {
       ctx.status = 404;
       return;
@@ -65,10 +65,28 @@ export const getComments = async (ctx) => {
     DELETE /api/course/comment/:id
 */
 export const remove = async (ctx) => {
-  const {id} = ctx.params;
+  const { id } = ctx.params;
   try {
     await CourseComment.findByIdAndRemove(id).exec();
     ctx.status = 204; // No Content (성공했으나 응답할 데이터 없음)
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+    Get  /api/course/comment/:courseId
+*/
+export const getCommentsInSetting = async (ctx) => {
+  const { userId } = ctx.params;
+
+  try {
+    const post = await CourseComment.find({ userId: userId }).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post;
   } catch (e) {
     ctx.throw(500, e);
   }

@@ -154,3 +154,54 @@ export const userCounsel = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+/*
+    PATCH /api/consumer/note/counsel/upload/:id
+    {
+      file: ,
+      file: 
+    }
+*/
+export const UploadCounselfile = async (ctx) => {
+  const { name } = ctx.request.body;
+  console.log('body 데이터 : ', name);
+
+  var paths = [];
+
+  //배열 형태이기 때문에 반복문을 통해 파일 정보를 알아낸다.
+  ctx.request.files.map((data) => {
+    console.log('폼에 정의된 필드명 : ', data.fieldname);
+    console.log('사용자가 업로드한 파일 명 : ', data.originalname);
+    console.log('파일의 엔코딩 타입 : ', data.encoding);
+    console.log('파일의 Mime 타입 : ', data.mimetype);
+    console.log('파일이 저장된 폴더 : ', data.destination);
+    console.log('destinatin에 저장된 파일 명 : ', data.filename);
+    console.log('업로드된 파일의 전체 경로 ', data.path);
+    console.log('파일의 바이트(byte 사이즈)', data.size);
+
+    paths.push(data.path);
+  });
+
+  ctx.body = {
+    ok: true,
+    data: 'Counselnote File Upload Ok',
+    path: paths,
+  };
+
+  console.log(paths);
+
+  const { id } = ctx.params;
+  try {
+    const post = await CounselNote.updateOne(
+      { _id: id },
+      { $set: { attachment_counsel: paths } },
+    ).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = await CounselNote.findById(id).exec();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};

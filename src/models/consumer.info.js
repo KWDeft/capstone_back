@@ -21,7 +21,12 @@ const ConsumerSchema = new Schema({
   user_purpose: String, // 운동목적
   vaccinate: String, // 백신유무
   category: String, // 유형
-  profile: String, // 프로필
+  // profile: String, // 프로필
+  profile: {
+    type: String,
+    default:
+      'https://pbs.twimg.com/profile_images/1459562606956793856/rMEpug4T_400x400.jpg',
+  },
 });
 
 ConsumerSchema.statics.findByUsernum = function (usernum) {
