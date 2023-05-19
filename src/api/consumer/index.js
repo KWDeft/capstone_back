@@ -11,6 +11,7 @@ consumer.get('/info', inforCtrl.list);
 consumer.post('/info/create', inforCtrl.inforCreate);
 consumer.get('/info/:id', inforCtrl.read);
 consumer.get('/info/usernum/:usernum', inforCtrl.searchusernum);
+consumer.get('/info/usernumlist/:usernum', inforCtrl.usernamelist);
 
 consumer.delete('/info/:id', inforCtrl.remove);
 consumer.patch('/info/:id', inforCtrl.update);

@@ -9,7 +9,7 @@ import Joi from 'joi';
     POST /api/schedule/coach
     {
         usernum: '회원번호',
-        manager: '수업할코치',
+        manager: '수업할코치',zzz
         date: '수업 날짜',
         startHour: '시작 시간 (시)',
         startMinute: '시작 시간 (분)',
@@ -26,8 +26,8 @@ export const scheduleCoach = async (ctx) => {
     date: Joi.string().required(),
     startHour: Joi.string().required(),
     startMinute: Joi.string().required(),
-    endHour: Joi.string().required(),
-    endMinute: Joi.string().required(),
+    // endHour: Joi.string().required(),
+    // endMinute: Joi.string().required(),
     memo: Joi.string(),
   });
 
@@ -39,7 +39,7 @@ export const scheduleCoach = async (ctx) => {
     return;
   }
 
-  const {usernum, manager, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
+  const {usernum, manager, date, startHour, startMinute, memo} = ctx.request.body;
   // const {manager} = await Consumer.findOne({usernum : usernum}).exec();
   const scheduleCoach = new ScheduleCoach({
     usernum, 
@@ -47,8 +47,8 @@ export const scheduleCoach = async (ctx) => {
     date, 
     startHour, 
     startMinute, 
-    endHour, 
-    endMinute, 
+    // endHour, 
+    // endMinute, 
     memo,
   });
 
@@ -141,13 +141,13 @@ export const searchName = async (ctx) => {
 // 코치번호로 일정 가져오기
 export const listwithcoachnum = async (ctx) => {
   const {coachnum} = ctx.params;
-  console.log("하,.",coachnum);
+  // console.log("하,.",coachnum);
 
   const {name} = await Coach.findOne({coachnum:coachnum}).exec();
-  console.log("이거야",name);
+  // console.log("이거야",name);
   try {
     const schedules = await ScheduleCoach.find({manager : name}).exec();
-    console.log(schedules);
+    // console.log(schedules);
     if(!schedules) {
       ctx.status = 404; // Not Found
       return;
@@ -172,8 +172,8 @@ export const update = async (ctx) => {
     date: Joi.string(),
     startHour: Joi.string(),
     startMinute: Joi.string(),
-    endHour: Joi.string(),
-    endMinute: Joi.string(),
+    // endHour: Joi.string(),
+    // endMinute: Joi.string(),
     memo: Joi.string(),
     completeCheck: Joi.string(),
   });

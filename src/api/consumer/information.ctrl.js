@@ -170,6 +170,34 @@ export const searchusernum = async (ctx) => {
   }
 };
 /*
+    GET /api/consumer/info/usernumlist/:usernum
+*/
+export const usernamelist = async (ctx) => {
+  const userlist = ctx.params;
+  let usernameList = [];
+  let realuserList = userlist.usernum.slice(1,-1).split(',');
+  
+  console.log("이거임",realuserList);
+
+  for (let i=0; i<realuserList.length;i++){
+    
+    const {name} = await Info.findOne({usernum : realuserList[i]}).exec();
+    console.log(name);
+    usernameList.push(name);
+  }
+  console.log(usernameList);
+  try {
+    const post = usernameList
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+/*
     DELETE /api/consumer/info/:id
 */
 export const remove = async (ctx) => {

@@ -7,8 +7,8 @@ const ScheduleSchema = new Schema({
   date: String,           // 수업 날짜
   startHour: String,      // 수업 시작 시간 (시)
   startMinute: String,    // 수업 시작 시간 (분)
-  endHour: String,        // 수업 종료 시간 (시)
-  endMinute: String,      // 수업 종료 시간 (시)
+  // endHour: String,        // 수업 종료 시간 (시)
+  // endMinute: String,      // 수업 종료 시간 (시)
   memo: String,           // 기타 메모
   completeCheck: String,  // 수업 진행 여부 (완료/미완료),
   

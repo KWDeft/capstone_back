@@ -45,6 +45,7 @@ export const register = async (ctx) => {
     if (checkCoach == undefined){
       console.log('존재하지 않는 코치');
       ctx.body ='존재하지 않는 코치입니다.'
+      return;
       
       return;
 

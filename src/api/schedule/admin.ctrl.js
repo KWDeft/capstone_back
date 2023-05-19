@@ -25,8 +25,8 @@ export const scheduleAdmin = async (ctx) => {
     date: Joi.string().required(),
     startHour: Joi.string().required(),
     startMinute: Joi.string().required(),
-    endHour: Joi.string().required(),
-    endMinute: Joi.string().required(),
+    // endHour: Joi.string().required(),
+    // endMinute: Joi.string().required(),
     memo: Joi.string(),
   });
 
@@ -38,9 +38,9 @@ export const scheduleAdmin = async (ctx) => {
     return;
   }
 
-  const {usernum, manager, date, startHour, startMinute, endHour, endMinute, memo} = ctx.request.body;
+  const {usernum, manager, date, startHour, startMinute, memo} = ctx.request.body;
   const {name} = await Consumer.findOne({usernum : usernum}).exec();
-  // const {manager} = await Consumer.findOne({usernum : usernum}).exec();
+  // const {manager} = await Consumer.({usernum : usernum}).exec();
   console.log("name : ", name);
   const scheduleAdmin = new ScheduleAdmin({
     usernum,
@@ -49,8 +49,8 @@ export const scheduleAdmin = async (ctx) => {
     date, 
     startHour, 
     startMinute, 
-    endHour, 
-    endMinute, 
+    // endHour, 
+    // endMinute, 
     memo,
   });
 
@@ -182,8 +182,8 @@ export const update = async (ctx) => {
     date: Joi.string(),
     startHour: Joi.string(),
     startMinute: Joi.string(),
-    endHour: Joi.string(),
-    endMinute: Joi.string(),
+    // endHour: Joi.string(),
+    // endMinute: Joi.string(),
     memo: Joi.string(),
     completeCheck: Joi.string(),
   });

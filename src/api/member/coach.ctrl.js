@@ -6,6 +6,40 @@ import Admin from '../../models/member.admin';
 import { check } from '../auth/auth.ctrl';
 
 /*
+  GET /api/coach/coachnum/:phone
+  {
+    phone: "01011111111"
+  }
+*/
+let check_ = 1;
+
+export const phoneConfirm = async (ctx) => {
+  const {phone} = ctx.request.body;
+  // console.log("받아온 값",phone);
+  if (phone.length != 11){
+    ctx.body='올바른 전화번호를 입력하세요. \n (-제외 11자리 입력)';
+    return check;
+  }
+  try{
+    const checkPhonNum = await Coach.findOne({phone:phone});
+    
+    if (checkPhonNum != undefined){
+      // console.log("이미 존재", checkPhonNum);
+      ctx.body = '해당 전화번호는 이미 존재합니다.';
+      return check_;
+    }
+    else {
+      // console.log("존재 x", checkPhonNum);
+      ctx.body = "추가 가능합니다.";
+      check_ = 2;
+      return check_;
+    }
+  }catch(e) {
+    ctx.throw(500, e);
+  }
+}
+
+/*
   POST /api/member/coach/create
   {
     name: "김광운",
@@ -60,7 +94,14 @@ export const coachCreate = async (ctx) => {
       coachnum: coachnum,
     });
 
-    await post.save(); // 데이터베이스에 저장
+    if(check_ == 2){
+      ctx.body = "코치 등록 완료";
+      await post.save(); // 데이터베이스에 저장
+    }
+    else{
+      ctx.body = "등록할 수 없습니다.";
+      ctx.status = 401;
+    }
 
     ctx.body = post;
   } catch (e) {
@@ -237,37 +278,6 @@ export const searchMember = async (ctx) => {
   }
 };
 
-/*
-  GET /api/coach/coachnum/:phone
-  {
-    phone: "01011111111"
-  }
-*/
-export const phoneConfirm = async (ctx) => {
-  const {phone} = ctx.request.body;
-  // console.log("받아온 값",phone);
-  let check = 1;
-  if (phone.length != 11){
-    ctx.body='올바른 전화번호를 입력하세요. \n (-제외 11자리 입력)';
-    return check;
-  }
-  try{
-    const checkPhonNum = await Coach.findOne({phone:phone});
-    
-    if (checkPhonNum != undefined){
-      // console.log("이미 존재", checkPhonNum);
-      ctx.body = '해당 전화번호는 이미 존재합니다.';
-      return check;
-    }
-    else {
-      // console.log("존재 x", checkPhonNum);
-      ctx.body = "추가 가능합니다.";
-      check = 2;
-      return check;
-    }
-  }catch(e) {
-    ctx.throw(500, e);
-  }
-}
+
 
 
