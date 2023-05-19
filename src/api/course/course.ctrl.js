@@ -4,11 +4,11 @@ import Joi from 'joi';
 /*
     POST /api/course/write
     {
-        title: '제목',
-        detail: '장애',
-        content: '내용',
-        effect: '효과',
-        attachment: ['url1', 'url2]
+        title: "제목",
+        detail: "장애",
+        content: "내용",
+        effect: "효과",
+        attachment: ["url1", "url2"]
     }
 */
 export const write = async (ctx) => {
@@ -107,7 +107,7 @@ export const update = async (ctx) => {
 };
 
 /*
-    POST /api/course/file/upload
+    PATCH /api/course/file/upload/:id
     {
       file: ,
       file: 
@@ -130,7 +130,7 @@ export const UploadCoursefile = async (ctx) => {
     console.log('업로드된 파일의 전체 경로 ', data.path);
     console.log('파일의 바이트(byte 사이즈)', data.size);
 
-    paths.push({ path: data.path });
+    paths.push(data.path);
   });
 
   ctx.body = {
@@ -138,4 +138,21 @@ export const UploadCoursefile = async (ctx) => {
     data: 'Course File Upload Ok',
     path: paths,
   };
+
+  console.log(paths);
+
+  const { id } = ctx.params;
+  try {
+    const post = await Course.updateOne(
+      { _id: id },
+      { $set: { attachment: paths } },
+    ).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = await Course.findById(id).exec();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
 };

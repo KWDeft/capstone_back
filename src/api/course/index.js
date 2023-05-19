@@ -11,6 +11,7 @@ course.delete('/:id', courseCtrl.remove);
 course.put('/:id', courseCtrl.update);
 course.post('/comment', courseCommentCtrl.comment);
 course.get('/comment/:courseId', courseCommentCtrl.getComments);
+course.get('/comment/user/:userId', courseCommentCtrl.getCommentsInSetting);
 course.delete('/comment/:id', courseCommentCtrl.remove);
 
 // 파일 업로드 관련
@@ -51,13 +52,13 @@ const fileFilter_course = (req, file, callback) => {
 };
 
 const upload_course = multer({
-  dest: __dirname + '/uploads/', // 이미지 업로드 경로
+  dest: __dirname + '/uploads_course/', // 이미지 업로드 경로
   limits: limits, // 이미지 업로드 제한 설정
   fileFilter: fileFilter_course, // 이미지 업로드 필터링 설정
 });
 
-course.post(
-  '/file/upload',
+course.patch(
+  '/file/upload/:id',
   upload_course.array('file'),
   courseCtrl.UploadCoursefile,
 );
