@@ -1,6 +1,7 @@
 import Joi from 'joi';
 import User from '../../models/user';
 import Coach from '../../models/member.coach';
+import Consumer from '../../models/consumer.info'
 import bcrypt from 'bcrypt';
 
 /*
@@ -38,17 +39,23 @@ export const register = async (ctx) => {
       return;
     }
 
-    console.log("result는",result.value.role);
+    // console.log("result는",result.value.role);
     if (result.value.role == 'coach'){
     const checkCoach = await Coach.findOne({coachnum:username});
-    console.log("있나?",checkCoach);
+    // console.log("있나?",checkCoach);
     if (checkCoach == undefined){
       console.log('존재하지 않는 코치');
       ctx.body ='존재하지 않는 코치입니다.'
       return;
-      
+    }
+  }
+  if (result.value.role == 'user'){
+    const checkCoach = await Consumer.findOne({usernum:username});
+    // console.log("있나?",checkCoach);
+    if (checkCoach == undefined){
+      console.log('존재하지 않는 회원');
+      ctx.body ='존재하지 않는 회원입니다.'
       return;
-
     }
   }
     const user = new User({
