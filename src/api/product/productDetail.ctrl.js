@@ -1,4 +1,5 @@
-import ProductDetail from "../../models/productDetail";
+import ProductDetail from '../../models/productDetail';
+import Product from '../../models/product';
 import Joi from 'joi';
 
 /*
@@ -19,22 +20,22 @@ export const detail = async (ctx) => {
 
   //검증과 실패인 경우 에러 처리
   const result = schema.validate(ctx.request.body);
-  if(result.error) {
+  if (result.error) {
     ctx.status = 400; //Bad request
     ctx.body = result.error;
     return;
   }
 
-  const {count, price, productId} = ctx.request.body;
+  const { count, price, productId } = ctx.request.body;
   const detail = new ProductDetail({
     count,
     price,
     productId,
   });
-  try{
+  try {
     await detail.save();
     ctx.body = detail;
-  } catch(e) {
+  } catch (e) {
     ctx.throw(500, e);
   }
 };
@@ -43,29 +44,65 @@ export const detail = async (ctx) => {
     Get  /api/product/detail/:productId
 */
 export const getProducts = async (ctx) => {
-    const { productId } = ctx.params;
-  
-    try {
-      const post = await ProductDetail.find({ productId : productId }).exec();
-      if (!post) {
-        ctx.status = 404;
-        return;
-      }
-      ctx.body = post;
-    } catch (e) {
-      ctx.throw(500, e);
+  const { productId } = ctx.params;
+
+  try {
+    const post = await ProductDetail.find({ productId: productId }).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
     }
-  };
-  
-  /*
+    ctx.body = post;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
       DELETE /api/product/detail/:id
   */
-  export const remove = async (ctx) => {
-    const {id} = ctx.params;
-    try {
-      await ProductDetail.findByIdAndRemove(id).exec();
-      ctx.status = 204; // No Content (성공했으나 응답할 데이터 없음)
-    } catch (e) {
-      ctx.throw(500, e);
+export const remove = async (ctx) => {
+  const { id } = ctx.params;
+  try {
+    await ProductDetail.findByIdAndRemove(id).exec();
+    ctx.status = 204; // No Content (성공했으나 응답할 데이터 없음)
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+    GET /api/product/detail/price/:productId
+*/
+export const getPrice = async (ctx) => {
+  let priceArr = [];
+
+  const { productId } = ctx.params;
+
+  try {
+    const post = await ProductDetail.find({ productId: productId }).exec();
+    const product = await Product.findById(productId).exec();
+
+    if (!post) {
+      ctx.status = 404;
+      return;
     }
-  };
+
+    if (!product) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+
+    for (let i = 0; i < post.length; i++) {
+      var value = product.name + '-' + post[i].price;
+      // priceArr.push(post[i].price);
+      priceArr.push(value);
+    }
+
+    // console.log(priceArr.length);
+
+    ctx.body = priceArr;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};

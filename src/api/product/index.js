@@ -9,9 +9,11 @@ product.get('/list', productCtrl.list);
 product.get('/read/:id', productCtrl.read);
 product.patch('/:id', productCtrl.update);
 product.delete('/:id', productCtrl.remove);
+product.get('/productname', productCtrl.getName);
 
 product.post('/detail', productDetailCtrl.detail);
 product.get('/detail/:productId', productDetailCtrl.getProducts);
 product.delete('/detail/:id', productDetailCtrl.remove);
+product.get('/detail/price/:productId', productDetailCtrl.getPrice);
 
 export default product;

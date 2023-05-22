@@ -7,6 +7,8 @@ import * as paymentCtrl from './payment.ctrl';
 const consumer = new Router();
 
 // 회원 정보
+consumer.get('/info/useramount', inforCtrl.consumerAmount);
+
 consumer.get('/info', inforCtrl.list);
 consumer.post('/info/create', inforCtrl.inforCreate);
 consumer.get('/info/:id', inforCtrl.read);

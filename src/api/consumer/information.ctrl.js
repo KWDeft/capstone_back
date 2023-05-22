@@ -175,19 +175,18 @@ export const searchusernum = async (ctx) => {
 export const usernamelist = async (ctx) => {
   const userlist = ctx.params;
   let usernameList = [];
-  let realuserList = userlist.usernum.slice(1,-1).split(',');
-  
-  console.log("이거임",realuserList);
+  let realuserList = userlist.usernum.slice(1, -1).split(',');
 
-  for (let i=0; i<realuserList.length;i++){
-    
-    const {name} = await Info.findOne({usernum : realuserList[i]}).exec();
+  console.log('이거임', realuserList);
+
+  for (let i = 0; i < realuserList.length; i++) {
+    const { name } = await Info.findOne({ usernum: realuserList[i] }).exec();
     console.log(name);
     usernameList.push(name);
   }
   console.log(usernameList);
   try {
-    const post = usernameList
+    const post = usernameList;
     if (!post) {
       ctx.status = 404;
       return;
@@ -298,6 +297,19 @@ export const UploadProfile = async (ctx) => {
     }
 
     ctx.body = await Info.findById(id).exec();
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+    GET /api/consumer/info/useramount
+*/
+export const consumerAmount = async (ctx) => {
+  try {
+    const post = await Info.find().exec();
+    ctx.body = post.length + 1;
+    console.log(post.length + 1);
   } catch (e) {
     ctx.throw(500, e);
   }
