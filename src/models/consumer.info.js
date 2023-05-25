@@ -24,8 +24,7 @@ const ConsumerSchema = new Schema({
   // profile: String, // 프로필
   profile: {
     type: String,
-    default:
-      'https://pbs.twimg.com/profile_images/1459562606956793856/rMEpug4T_400x400.jpg',
+    default: 'https://cdn-icons-png.flaticon.com/128/2102/2102647.png',
   },
 });
 

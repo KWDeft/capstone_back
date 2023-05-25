@@ -1,6 +1,15 @@
 import Joi from 'joi';
 import Info from '../../models/consumer.info';
 
+const cloudinary = require('cloudinary').v2;
+
+// Configuration
+cloudinary.config({
+  cloud_name: 'diuaakllc',
+  api_key: '433417138596379',
+  api_secret: 'jBXm92um5wxVuJ-oWhQ-OUykAKk',
+});
+
 /*
     GET /api/consumer/info
 */
@@ -262,44 +271,83 @@ export const userSearch = async (ctx) => {
 */
 export const UploadProfile = async (ctx) => {
   const {
-    fieldname,
-    originalname,
-    encoding,
-    mimetype,
-    destination,
-    filename,
+    // fieldname,
+    // originalname,
+    // encoding,
+    // mimetype,
+    // destination,
+    // filename,
     path,
-    size,
+    // size,
   } = ctx.request.file;
   const { name } = ctx.request.body;
 
-  console.log('body 데이터 : ', name);
-  console.log('폼에 정의된 필드명 : ', fieldname);
-  console.log('사용자가 업로드한 파일 명 : ', originalname);
-  console.log('파일의 엔코딩 타입 : ', encoding);
-  console.log('파일의 Mime 타입 : ', mimetype);
-  console.log('파일이 저장된 폴더 : ', destination);
-  console.log('destinatin에 저장된 파일 명 : ', filename);
-  console.log('업로드된 파일의 전체 경로 ', path);
-  console.log('파일의 바이트(byte 사이즈)', size);
+  // console.log('body 데이터 : ', name);
+  // console.log('폼에 정의된 필드명 : ', fieldname);
+  // console.log('사용자가 업로드한 파일 명 : ', originalname);
+  // console.log('파일의 엔코딩 타입 : ', encoding);
+  // console.log('파일의 Mime 타입 : ', mimetype);
+  // console.log('파일이 저장된 폴더 : ', destination);
+  // console.log('destinatin에 저장된 파일 명 : ', filename);
+  // console.log('업로드된 파일의 전체 경로 ', path);
+  // console.log('파일의 바이트(byte 사이즈)', size);
+
+  const res = cloudinary.uploader.upload(path, { public_id: name });
+
+  res
+    .then(async (data) => {
+      // console.log(data);
+      console.log(data.secure_url);
+
+      // ctx.body = { ok: true, data: 'Profile Upload Ok', path: path };
+
+      const { id } = ctx.params;
+      try {
+        const post = await Info.updateOne(
+          { _id: id },
+          { $set: { profile: data.secure_url } },
+        ).exec();
+        if (!post) {
+          ctx.status = 404;
+          return;
+        }
+
+        ctx.body = await Info.findById(id).exec();
+      } catch (e) {
+        ctx.throw(500, e);
+      }
+    })
+    .catch((err) => {
+      // console.log(err);
+    });
+
+  // // Generate
+  // const url = cloudinary.url(name, {
+  //   width: 100,
+  //   height: 150,
+  //   Crop: 'fill',
+  // });
+
+  // // The output url
+  // console.log(url);
 
   ctx.body = { ok: true, data: 'Profile Upload Ok', path: path };
 
-  const { id } = ctx.params;
-  try {
-    const post = await Info.updateOne(
-      { _id: id },
-      { $set: { profile: path } },
-    ).exec();
-    if (!post) {
-      ctx.status = 404;
-      return;
-    }
+  // const { id } = ctx.params;
+  // try {
+  //   const post = await Info.updateOne(
+  //     { _id: id },
+  //     { $set: { profile: path } },
+  //   ).exec();
+  //   if (!post) {
+  //     ctx.status = 404;
+  //     return;
+  //   }
 
-    ctx.body = await Info.findById(id).exec();
-  } catch (e) {
-    ctx.throw(500, e);
-  }
+  //   ctx.body = await Info.findById(id).exec();
+  // } catch (e) {
+  //   ctx.throw(500, e);
+  // }
 };
 
 /*
@@ -310,6 +358,24 @@ export const consumerAmount = async (ctx) => {
     const post = await Info.find().exec();
     ctx.body = post.length + 1;
     console.log(post.length + 1);
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
+
+/*
+    GET /api/consumer/profile/url/:id
+*/
+export const profileUrl = async (ctx) => {
+  const { id } = ctx.params;
+
+  try {
+    const post = await Info.findById(id).exec();
+    if (!post) {
+      ctx.status = 404;
+      return;
+    }
+    ctx.body = post.profile;
   } catch (e) {
     ctx.throw(500, e);
   }

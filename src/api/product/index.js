@@ -14,6 +14,7 @@ product.get('/productname', productCtrl.getName);
 product.post('/detail', productDetailCtrl.detail);
 product.get('/detail/:productId', productDetailCtrl.getProducts);
 product.delete('/detail/:id', productDetailCtrl.remove);
-product.get('/detail/price/:productId', productDetailCtrl.getPrice);
+// product.get('/detail/price/:productId', productDetailCtrl.getPrice);
+product.get('/detail/price/:productname', productDetailCtrl.getPrice2);
 
 export default product;

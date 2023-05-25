@@ -106,3 +106,40 @@ export const getPrice = async (ctx) => {
     ctx.throw(500, e);
   }
 };
+
+/*
+    GET /api/product/detail/price/:productname
+*/
+export const getPrice2 = async (ctx) => {
+  let priceArr = [];
+
+  const { productname } = ctx.params;
+
+  try {
+    const product = await Product.find({ name: productname }).exec();
+
+    if (!product) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+
+    for (let i = 0; i < product.length; i++) {
+      const post = await ProductDetail.find({
+        productId: product[i]._id,
+      }).exec();
+
+      if (!post) {
+        ctx.status = 404;
+        return;
+      }
+
+      for (let i = 0; i < post.length; i++) {
+        priceArr.push(post[i].price);
+      }
+    }
+
+    ctx.body = priceArr;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};

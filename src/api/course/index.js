@@ -4,6 +4,9 @@ import * as courseCommentCtrl from './courseComment.ctrl';
 
 const course = new Router();
 
+course.get('/file/url/:id', courseCtrl.fileUrl);
+course.get('/video/url/:id', courseCtrl.videoUrl);
+
 course.get('/list', courseCtrl.list);
 course.post('/write', courseCtrl.write);
 course.get('/:id', courseCtrl.read);
@@ -19,9 +22,9 @@ const multer = require('@koa/multer');
 
 const limits = {
   fieldNameSize: 1000, // 필드명 사이즈 최대값 (기본값 100bytes)
-  filedSize: 1024 * 1024, // 필드 사이즈 값 설정 (기본값 1MB)
+  // filedSize: 1024 * 1024, // 필드 사이즈 값 설정 (기본값 1MB)
   fields: 2, // 파일 형식이 아닌 필드의 최대 개수 (기본 값 무제한)
-  fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
+  // fileSize: 16777216, //multipart 형식 폼에서 최대 파일 사이즈(bytes) "16MB 설정" (기본 값 무제한)
   files: 10, //multipart 형식 폼에서 파일 필드 최대 개수 (기본 값 무제한)
 };
 
@@ -35,7 +38,6 @@ const fileFilter_course = (req, file, callback) => {
     fileType == 'jpg' ||
     fileType == 'jpeg' ||
     fileType == 'png' ||
-    fileType == 'pdf' ||
     fileType == 'mov' ||
     fileType == 'mp4'
   ) {
@@ -61,6 +63,12 @@ course.patch(
   '/file/upload/:id',
   upload_course.array('file'),
   courseCtrl.UploadCoursefile,
+);
+
+course.patch(
+  '/video/upload/:id',
+  upload_course.array('file'),
+  courseCtrl.UploadVideo,
 );
 
 export default course;

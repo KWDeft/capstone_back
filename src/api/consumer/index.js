@@ -86,6 +86,8 @@ consumer.patch(
   inforCtrl.UploadProfile,
 );
 
+consumer.get('/profile/url/:id', inforCtrl.profileUrl);
+
 // 수업일지 첨부파일
 const limits_classfile = {
   fieldNameSize: 1000, // 필드명 사이즈 최대값 (기본값 100bytes)
