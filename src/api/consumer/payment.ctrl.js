@@ -16,7 +16,7 @@ export const list = async (ctx) => {
 /*
   POST /api/consumer/payment/create
   {
-    pay_amount: 135000, //결제 금액
+    pay_amount: "135,000", //결제 금액
     usernum: 123, //회원번호
     product: "상품 이름", //상품이름
     pay_method: "계좌이체", //결제 정보
@@ -27,7 +27,7 @@ export const Create = async (ctx) => {
   // Request Body 검증하기
   // 필수: pay_amount, product, pay_method, usernum, pay_date
   const schema = Joi.object().keys({
-    pay_amount: Joi.number().required(), // 결제 금액
+    pay_amount: Joi.string().required(), // 결제 금액
     product: Joi.string().required(), // 상품 이름
     pay_method: Joi.string().required(), // 지불 방법
     usernum: Joi.number().required(), // 회원 번호
