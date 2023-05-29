@@ -7,6 +7,7 @@ const product = new Router();
 product.post('/write', productCtrl.write);
 product.get('/list', productCtrl.list);
 product.get('/read/:id', productCtrl.read);
+product.get('/get/:name', productCtrl.readByName);
 product.patch('/:id', productCtrl.update);
 product.delete('/:id', productCtrl.remove);
 

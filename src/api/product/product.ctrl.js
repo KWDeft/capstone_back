@@ -64,6 +64,23 @@ export const read = async (ctx) => {
       ctx.throw(500, e);
     }
 };
+
+/*
+    GET api/product/get/:name
+*/
+export const readByName = async (ctx) => {
+  const {name} = ctx.params;
+  try {
+    const product = await Product.findByName(name).exec();
+    if(!product) {
+      ctx.status = 404; // Not Found
+      return;
+    }
+    ctx.body = product;
+  } catch (e) {
+    ctx.throw(500, e);
+  }
+};
   
 /*
     DELETE api/product/:id
